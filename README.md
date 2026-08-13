@@ -66,4 +66,3 @@ git push
 ---
 
 Built for simplicity and speed.
-# meripaivat2026

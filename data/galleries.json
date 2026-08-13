@@ -1,0 +1,65 @@
+{
+  "nature": {
+    "name": "Nature",
+    "slug": "nature",
+    "images": [
+      {
+        "title": "Golden Hour",
+        "subtitle": "Nature",
+        "imageUrl": "https://picsum.photos/id/1016/800/600"
+      },
+      {
+        "title": "Mountain Peak",
+        "subtitle": "Nature",
+        "imageUrl": "https://picsum.photos/id/1040/800/600"
+      },
+      {
+        "title": "Forest Path",
+        "subtitle": "Nature",
+        "imageUrl": "https://picsum.photos/id/1018/800/600"
+      },
+      {
+        "title": "Ocean Whisper",
+        "subtitle": "Nature",
+        "imageUrl": "https://picsum.photos/id/1033/800/600"
+      }
+    ]
+  },
+  "urban": {
+    "name": "Urban",
+    "slug": "urban",
+    "images": [
+      {
+        "title": "City Lights",
+        "subtitle": "Urban",
+        "imageUrl": "https://picsum.photos/id/106/800/600"
+      },
+      {
+        "title": "Rainy Streets",
+        "subtitle": "Urban",
+        "imageUrl": "https://picsum.photos/id/107/800/600"
+      },
+      {
+        "title": "Urban Shadows",
+        "subtitle": "Urban",
+        "imageUrl": "https://picsum.photos/id/1027/800/600"
+      }
+    ]
+  },
+  "portraits": {
+    "name": "Portraits",
+    "slug": "portraits",
+    "images": [
+      {
+        "title": "Quiet Gaze",
+        "subtitle": "Portraits",
+        "imageUrl": "https://picsum.photos/id/1005/800/600"
+      },
+      {
+        "title": "Golden Portrait",
+        "subtitle": "Portraits",
+        "imageUrl": "https://picsum.photos/id/1011/800/600"
+      }
+    ]
+  }
+}
