@@ -1,6 +1,42 @@
 // LENS Portfolio - Shared JavaScript
+// Includes true viewport-based lazy loading (Intersection Observer)
 
-// Mobile nav toggle
+// ========== Lazy Loading Engine ==========
+const lazyImageObserver = new IntersectionObserver((entries, observer) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+
+    const img = entry.target;
+    const realSrc = img.dataset.src;
+
+    if (realSrc) {
+      // Optional: fade-in effect
+      img.style.opacity = '0';
+      img.style.transition = 'opacity 0.4s ease';
+
+      img.onload = () => {
+        img.style.opacity = '1';
+        img.classList.add('loaded');
+      };
+
+      img.src = realSrc;
+      img.removeAttribute('data-src');
+    }
+
+    observer.unobserve(img);
+  });
+}, {
+  // Start loading a bit before the image enters the viewport
+  rootMargin: '200px 0px',
+  threshold: 0.01
+});
+
+function observeLazyImages(container = document) {
+  const lazyImages = container.querySelectorAll('img[data-src]');
+  lazyImages.forEach(img => lazyImageObserver.observe(img));
+}
+
+// ========== Mobile nav toggle ==========
 document.addEventListener('DOMContentLoaded', () => {
   const navToggle = document.getElementById('nav-toggle');
   const navMenu = document.getElementById('nav-menu');
@@ -131,7 +167,7 @@ async function populateNavGalleries() {
   }).join('');
 }
 
-// Homepage gallery cards
+// Homepage gallery cards (also lazy-loaded)
 async function renderHomeGalleryCards() {
   const container = document.getElementById('gallery-cards');
   if (!container) return;
@@ -155,16 +191,19 @@ async function renderHomeGalleryCards() {
     const count = g.images.length;
     return `
       <a href="gallery.html?g=${slug}" class="gallery-card">
-        <img src="${cover}" alt="${g.name}">
+        <img data-src="${cover}" alt="${g.name}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%2316213e' width='400' height='300'/%3E%3C/svg%3E">
         <div class="gallery-card-content">
           <h3>${g.name}</h3>
           <p>${count} photograph${count !== 1 ? 's' : ''}</p>
         </div>
       </a>`;
   }).join('');
+
+  // Start observing the cover images
+  observeLazyImages(container);
 }
 
-// Gallery page renderer
+// Gallery page renderer with true lazy loading
 async function renderGalleryPage() {
   const grid = document.getElementById('gallery-grid');
   const titleEl = document.getElementById('gallery-title');
@@ -177,7 +216,6 @@ async function renderGalleryPage() {
   const galleries = await loadGalleries();
 
   if (!slug || !galleries[slug]) {
-    // Show all galleries overview or first one
     if (Object.keys(galleries).length === 0) {
       grid.innerHTML = `
         <div class="empty-gallery" style="grid-column: 1 / -1;">
@@ -191,7 +229,7 @@ async function renderGalleryPage() {
       return;
     }
 
-    // Redirect to first gallery or show selector
+    // Redirect to first gallery
     const first = Object.keys(galleries)[0];
     window.location.href = `gallery.html?g=${first}`;
     return;
@@ -211,9 +249,14 @@ async function renderGalleryPage() {
     return;
   }
 
+  // Use data-src instead of src — images only load when visible
   grid.innerHTML = gallery.images.map((photo, index) => `
     <div class="gallery-item" data-index="${index}">
-      <img src="${photo.imageUrl}" alt="${photo.title}" loading="lazy">
+      <img 
+        data-src="${photo.imageUrl}" 
+        alt="${photo.title}"
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%2316213e' width='400' height='300'/%3E%3C/svg%3E"
+      >
       <div class="overlay">
         <h3>${photo.title}</h3>
         <span>${photo.subtitle}</span>
@@ -221,16 +264,19 @@ async function renderGalleryPage() {
     </div>
   `).join('');
 
-  // Attach click handlers
+  // Attach click handlers for lightbox
   grid.querySelectorAll('.gallery-item').forEach(item => {
     item.addEventListener('click', () => {
       const idx = parseInt(item.dataset.index, 10);
       openLightbox(gallery.images, idx);
     });
   });
+
+  // Start observing all gallery images
+  observeLazyImages(grid);
 }
 
-// Initialize based on page
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
   populateNavGalleries();
   renderHomeGalleryCards();
